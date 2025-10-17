@@ -30,9 +30,16 @@ data = get_data(tickers, start_date, end_date)
 st.title("💼 Investment Dashboard")
 st.markdown("Track your portfolio performance with real-time data and interactive charts.")
 
-if data is None or data.empty:
+if not tickers:
+    st.warning("Please enter at least one valid ticker symbol.")
+elif data is None or data.empty:
     st.error("❌ No data found. Please check your ticker symbols or date range.")
 else:
+    # --- Real-Time Price Display ---
+    st.subheader("📌 Latest Prices")
+    latest_prices = {ticker: round(data[ticker].dropna().iloc[-1], 2) for ticker in data.columns}
+    st.write(pd.DataFrame(latest_prices.items(), columns=["Ticker", "Latest Price ($)"]))
+
     # --- Line Chart ---
     st.subheader("📈 Price History")
     st.line_chart(data)
